@@ -9,7 +9,7 @@ body {
 }
 
 .container {
-  margin: 12px auto;
+  margin: auto 12px;
 }
 
 .error {
