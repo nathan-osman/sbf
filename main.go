@@ -6,6 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/nathan-osman/sbf/server"
 	"github.com/urfave/cli/v2"
 )
 
@@ -15,25 +16,41 @@ func main() {
 		Usage: "Microservice for sending large files",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
-				Name:    "admin-password",
-				Usage:   "password for the admin",
-				Value:   ":http",
-				EnvVars: []string{"ADMIN_PASSWORD"},
-			},
-			&cli.StringFlag{
-				Name:    "admin-username",
-				Usage:   "username for the admin",
-				Value:   ":http",
-				EnvVars: []string{"ADMIN_USER"},
-			},
-			&cli.StringFlag{
-				Name:    "server-addr",
+				Name:    "addr",
 				Usage:   "address to listen on",
 				Value:   ":http",
-				EnvVars: []string{"SERVER_ADDR"},
+				EnvVars: []string{"ADDR"},
+			},
+			&cli.StringFlag{
+				Name:    "dir",
+				Usage:   "directory for storing files",
+				Value:   "/data",
+				EnvVars: []string{"DIR"},
+			},
+			&cli.StringFlag{
+				Name:    "username",
+				Usage:   "username for the admin",
+				EnvVars: []string{"USERNAME"},
+			},
+			&cli.StringFlag{
+				Name:    "password",
+				Usage:   "password for the admin",
+				EnvVars: []string{"PASSWORD"},
 			},
 		},
 		Action: func(c *cli.Context) error {
+
+			// Create & initialize the server
+			s, err := server.New(&server.Config{
+				Addr:     c.String("addr"),
+				Dir:      c.String("dir"),
+				Username: c.String("username"),
+				Password: c.String("password"),
+			})
+			if err != nil {
+				return err
+			}
+			defer s.Close()
 
 			// Wait for SIGINT or SIGTERM
 			sigChan := make(chan os.Signal, 1)
