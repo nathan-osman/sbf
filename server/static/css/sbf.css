@@ -1,0 +1,28 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #e0e0e0;
+  font-family: sans-serif;
+  margin: 0;
+}
+
+.container {
+  margin: 12px auto;
+}
+
+.header {
+  background-color: #303030;
+  color: white;
+  font-size: 32px;
+  margin-bottom: 16px;
+  padding: 12px 0;
+}
+
+@media (min-width: 800px) {
+  .container {
+    margin: auto;
+    width: 720px;
+  }
+}

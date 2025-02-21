@@ -2,9 +2,12 @@ package server
 
 import (
 	"context"
+	"embed"
 	"errors"
 	"net/http"
+	"path"
 
+	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -15,7 +18,30 @@ type Server struct {
 	logger zerolog.Logger
 }
 
+var (
+	//go:embed static/*
+	staticFS embed.FS
+)
+
+type embedFileSystem struct {
+	http.FileSystem
+}
+
+func (e embedFileSystem) Exists(prefix, filepath string) bool {
+	f, err := e.Open(path.Join(prefix, filepath))
+	if err != nil {
+		return false
+	}
+	f.Close()
+	return true
+}
+
 func New(cfg *Config) (*Server, error) {
+
+	// Throw an error if no username / password was provided
+	if cfg.Username == "" || cfg.Password == "" {
+		return nil, errors.New("username and password must be supplied")
+	}
 
 	// Switch Gin to release mode
 	gin.SetMode(gin.ReleaseMode)
@@ -43,6 +69,11 @@ func New(cfg *Config) (*Server, error) {
 
 	// The home page
 	r.GET("/", s.index)
+
+	// Static files
+	r.Use(
+		static.Serve("/", embedFileSystem{http.FS(staticFS)}),
+	)
 
 	// Start the goroutine that listens for incoming connections
 	go func() {
