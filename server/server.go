@@ -16,6 +16,7 @@ import (
 type Server struct {
 	server http.Server
 	logger zerolog.Logger
+	dir    string
 }
 
 var (
@@ -54,6 +55,7 @@ func New(cfg *Config) (*Server, error) {
 				Handler: r,
 			},
 			logger: log.With().Str("package", "server").Logger(),
+			dir:    cfg.Dir,
 		}
 	)
 
@@ -73,7 +75,29 @@ func New(cfg *Config) (*Server, error) {
 	// Static files
 	r.Use(
 		static.Serve("/", embedFileSystem{http.FS(staticFS)}),
+		static.Serve("/srv", static.LocalFile(s.dir, false)),
 	)
+
+	// Attempt to handle panic() calls by displaying the error
+	r.Use(gin.CustomRecovery(func(c *gin.Context, i interface{}) {
+		var message string
+		switch v := i.(type) {
+		case error:
+			message = v.Error()
+		case string:
+			message = v
+		default:
+			message = "an unknown error has occurred"
+		}
+		c.Status(http.StatusInternalServerError)
+		render(c, "templates/error.html", gin.H{
+			"Message": message,
+		})
+	}))
+
+	// File listings & uploader
+	r.GET("/:name", s.srvFolderGET)
+	r.POST("/:name", s.srvFolderPOST)
 
 	// Start the goroutine that listens for incoming connections
 	go func() {

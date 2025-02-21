@@ -5,6 +5,7 @@ go 1.21.0
 require (
 	github.com/gin-contrib/static v1.1.3
 	github.com/gin-gonic/gin v1.10.0
+	github.com/jpillora/sizestr v1.0.0
 	github.com/rs/zerolog v1.33.0
 	github.com/urfave/cli/v2 v2.27.5
 )

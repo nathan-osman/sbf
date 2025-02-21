@@ -1,0 +1,42 @@
+{{define "content"}}
+<p>
+  This folder has been shared with you so that you can securely and safely upload / download large files.
+</p>
+{{if eq (len .Files) 0}}
+<p>
+  The folder is currently empty.
+</p>
+{{else}}
+<p>
+  These files are currently in the folder:
+</p>
+<table class="files">
+  <thead>
+    <tr>
+      <th>Filename</th>
+      <th>Size</th>
+      <th>Last Modified</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{range .Files}}
+    <tr>
+      <td>
+        <a href="/srv/{{$.Name}}/{{.Name}}">
+          {{.Name}}
+        </a>
+      </td>
+      <td>{{.Size}}</td>
+      <td>{{.ModTime}}</td>
+    </tr>
+    {{end}}
+  </tbody>
+</table>
+{{end}}
+<p>To upload a file, please select one below:</p>
+<form method="post" enctype="multipart/form-data">
+  <input type="file" name="file">
+  <br><br>
+  <button type="submit">Upload</button>
+</form>
+{{end}}

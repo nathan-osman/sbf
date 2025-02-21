@@ -24,7 +24,7 @@ func main() {
 			&cli.StringFlag{
 				Name:    "dir",
 				Usage:   "directory for storing files",
-				Value:   "/data",
+				Value:   ".",
 				EnvVars: []string{"DIR"},
 			},
 			&cli.StringFlag{

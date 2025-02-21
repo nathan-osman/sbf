@@ -12,12 +12,34 @@ body {
   margin: 12px auto;
 }
 
+.error {
+  color: #800000;
+}
+
 .header {
   background-color: #303030;
   color: white;
   font-size: 32px;
   margin-bottom: 16px;
   padding: 12px 0;
+}
+
+table.files {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table.files th {
+  text-align: left;
+}
+
+table.files th,
+table.files td {
+  padding: 4px 8px;
+}
+
+table.files tbody tr:nth-child(odd) {
+  background-color: white;
 }
 
 @media (min-width: 800px) {
