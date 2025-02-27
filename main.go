@@ -40,6 +40,11 @@ func main() {
 		},
 		Action: func(c *cli.Context) error {
 
+			// Create the tmp directory if it doesn't exist
+			if err := os.MkdirAll(os.TempDir(), 1777); err != nil {
+				return err
+			}
+
 			// Create & initialize the server
 			s, err := server.New(&server.Config{
 				Addr:     c.String("addr"),
